@@ -7,6 +7,9 @@ import (
 const englishPrefixHello = "Hello, "
 
 func Hello(name string) string {
+	if name == "" {
+		return englishPrefixHello + "World"
+	}
 	return englishPrefixHello + name
 }
 
