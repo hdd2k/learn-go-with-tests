@@ -1,15 +1,12 @@
 package main
 
-import (
-	"errors"
-)
-
 type Dictionary map[string]string
 type DictError string
 
 const (
-	ErrNotFound   = DictError("could not find word")
-	ErrWordExists = DictError("word already exists")
+	ErrNotFound         = DictError("could not find word")
+	ErrWordExists       = DictError("word already exists")
+	ErrWordDoesNotExist = DictError("word does NOT exist")
 )
 
 func (de DictError) Error() string {
@@ -36,5 +33,20 @@ func (d Dictionary) Add(key, val string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (d Dictionary) Update(key, val string) error {
+
+	_, err := d.Search(key)
+
+	switch err {
+	case ErrNotFound:
+		return ErrWordDoesNotExist
+	case nil:
+		d[key] = val
+	default:
+		return err
+	}
 	return nil
 }
