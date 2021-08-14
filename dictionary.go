@@ -50,3 +50,7 @@ func (d Dictionary) Update(key, val string) error {
 	}
 	return nil
 }
+
+func (d Dictionary) Delete(key string) {
+	delete(d, key)
+}

@@ -65,7 +65,15 @@ func TestUpdate(t *testing.T) {
 
 		assertErrorEq(t, err, ErrWordDoesNotExist)
 	})
+}
 
+func TestDelete(t *testing.T) {
+	word := "test"
+	dictionary := Dictionary{word: "some val"}
+
+	dictionary.Delete(word)
+	_, err := dictionary.Search(word)
+	assertErrorEq(t, err, ErrNotFound)
 }
 
 func assertString(t testing.TB, got, want string) {
