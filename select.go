@@ -5,7 +5,13 @@ import (
 	"time"
 )
 
-func Racer(urlOne, urlTwo string) (winner string) {
+type Racer func(string, string) string
+
+func Race(r Racer, urlOne, urlTwo string) string {
+	return r(urlOne, urlTwo)
+}
+
+func BaseRacer(urlOne, urlTwo string) (winner string) {
 	durationOne := measureDuration(urlOne)
 	durationTwo := measureDuration(urlTwo)
 
