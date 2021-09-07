@@ -6,10 +6,12 @@ import (
 	"time"
 )
 
-type Racer func(string, string) (string, error)
+var tenSecTimeout = 10 * time.Second
 
-func Race(r Racer, urlOne, urlTwo string) (string, error) {
-	return r(urlOne, urlTwo)
+// type Racer func(string, string) (string, error)
+
+func Racer(urlOne, urlTwo string) (string, error) {
+	return ConfigurableRacer(urlOne, urlTwo, tenSecTimeout)
 }
 
 func BaseRacer(urlOne, urlTwo string) (winner string, err error) {
@@ -22,13 +24,13 @@ func BaseRacer(urlOne, urlTwo string) (winner string, err error) {
 	return urlOne, nil
 }
 
-func SelectRacer(urlOne, urlTwo string) (winner string, err error) {
+func ConfigurableRacer(urlOne, urlTwo string, timeout time.Duration) (winner string, err error) {
 	select {
 	case <-ping(urlOne):
 		return urlOne, nil
 	case <-ping(urlTwo):
 		return urlTwo, nil
-	case <-time.After(10 * time.Second):
+	case <-time.After(timeout):
 		return "", fmt.Errorf("timed out waiting for %s ad %s", urlOne, urlTwo)
 	}
 }
