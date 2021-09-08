@@ -1,28 +1,35 @@
 package main
 
-import "reflect"
+import (
+	"reflect"
+)
 
 func walk(x interface{}, fn func(string)) {
 	val := getValue(x)
 
 	// Each elem in slice OR each field
-	numOfValues := 0
-	var getFieldFunc func(int) reflect.Value
+
+	walkValue := func(val reflect.Value) {
+		walk(val.Interface(), fn)
+	}
 
 	switch val.Kind() {
 	case reflect.Slice, reflect.Array:
-		getFieldFunc = val.Index
-		numOfValues = val.Len()
+		for i := 0; i < val.Len(); i++ {
+			walkValue(val.Index(i))
+		}
 	case reflect.Struct:
-		getFieldFunc = val.Field
-		numOfValues = val.NumField()
+		for i := 0; i < val.NumField(); i++ {
+			walkValue(val.Field(i))
+		}
+	case reflect.Map:
+		for _, key := range val.MapKeys() {
+			walk(val.MapIndex(key).Interface(), fn)
+		}
 	case reflect.String:
 		fn(val.String())
 	}
 
-	for i := 0; i < numOfValues; i++ {
-		walk(getFieldFunc(i).Interface(), fn)
-	}
 }
 
 func getValue(x interface{}) reflect.Value {
