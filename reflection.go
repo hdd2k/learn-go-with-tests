@@ -28,8 +28,12 @@ func walk(x interface{}, fn func(string)) {
 		}
 	case reflect.String:
 		fn(val.String())
+	case reflect.Chan:
+		// Keep receiving while "ok"
+		for v, ok := val.Recv(); ok; v, ok = val.Recv() {
+			walkValue(v)
+		}
 	}
-
 }
 
 func getValue(x interface{}) reflect.Value {
