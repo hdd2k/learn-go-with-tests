@@ -80,14 +80,6 @@ func TestWalk(t *testing.T) {
 			},
 			[]string{"Seoul", "San Francisco"},
 		},
-		{
-			"Maps",
-			map[string]string{
-				"Foo": "Bar",
-				"Baz": "Boz",
-			},
-			[]string{"Bar", "Boz"},
-		},
 	}
 
 	for _, test := range cases {
@@ -101,5 +93,35 @@ func TestWalk(t *testing.T) {
 				t.Errorf("got %v, want %v", got, test.ExpectedCalls)
 			}
 		})
+	}
+
+	// New test for maps without ordering concerns
+	t.Run("with maps", func(t *testing.T) {
+		aMap := map[string]string{
+			"Foo": "Bar",
+			"Baz": "Boz",
+		}
+
+		var got []string
+		walk(aMap, func(input string) {
+			got = append(got, input)
+		})
+
+		// Test membership (without caring about ordering)
+		assertContains(t, got, "Bar")
+		assertContains(t, got, "Boz")
+	})
+}
+
+func assertContains(t *testing.T, got []string, expected string) {
+	t.Helper()
+	contains := false
+	for _, x := range got {
+		if x == expected {
+			contains = true
+		}
+	}
+	if !contains {
+		t.Errorf("expected %+v to contain %q but not found", got, expected)
 	}
 }
