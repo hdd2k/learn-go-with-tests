@@ -21,16 +21,19 @@ func TestCounter(t *testing.T) {
 		wantCount := 1000
 		counter := Counter{}
 
-		// waitgroup
+		// waitgroup - convenient way to synchronize concurrent processes/threads
 		var wg sync.WaitGroup
+		// Add() -> set the NUMBER of processes to WAIT for
 		wg.Add(wantCount)
 
 		for i := 0; i < wantCount; i++ {
 			go func() {
 				counter.Inc()
+				// Registers 1 "Done" process to the waitgroup
 				wg.Done()
 			}()
 		}
+		// waits until ALL expected processes are finished
 		wg.Wait()
 
 		assertCounter(t, &counter, wantCount)
