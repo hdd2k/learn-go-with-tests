@@ -3,12 +3,13 @@ package main
 import ()
 
 type Counter struct {
+	value int
 }
 
 func (c *Counter) Inc() {
-
+	c.value += 1
 }
 
 func (c *Counter) Value() int {
-	return 3
+	return c.value
 }
