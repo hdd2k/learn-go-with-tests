@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -15,11 +16,30 @@ func TestCounter(t *testing.T) {
 
 		assertCounter(t, &counter, 3)
 	})
+
+	t.Run("Thread-safe increment test", func(t *testing.T) {
+		wantCount := 1000
+		counter := Counter{}
+
+		// waitgroup
+		var wg sync.WaitGroup
+		wg.Add(wantCount)
+
+		for i := 0; i < wantCount; i++ {
+			go func() {
+				counter.Inc()
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+
+		assertCounter(t, &counter, wantCount)
+	})
 }
 
 func assertCounter(t testing.TB, got *Counter, want int) {
 	t.Helper()
 	if got.Value() != want {
-		t.Errorf("got %d, expected %d", got.Value(), 3)
+		t.Errorf("got %d, expected %d", got.Value(), want)
 	}
 }
