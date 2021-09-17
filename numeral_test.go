@@ -5,20 +5,31 @@ import (
 )
 
 func TestNumeral(t *testing.T) {
-	t.Run("1 converts to I", func(t *testing.T) {
-		got := ConvertToRoman(1)
-		want := "I"
 
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
-	})
-	t.Run("2 converts to II", func(t *testing.T) {
-		got := ConvertToRoman(2)
-		want := "II"
+	cases := []struct {
+		Desc   string
+		Arabic int
+		Want   string
+	}{
+		{
+			"1 converts to I",
+			1,
+			"I",
+		},
+		{
+			"2 converts to II",
+			2,
+			"II",
+		},
+	}
 
-		if got != want {
-			t.Errorf("got %q want %q", got, want)
-		}
-	})
+	for _, c := range cases {
+		t.Run(c.Desc, func(t *testing.T) {
+			want := c.Want
+			got := ConvertToRoman(c.Arabic)
+			if want != got {
+				t.Errorf("got %q want %q", got, want)
+			}
+		})
+	}
 }
