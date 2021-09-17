@@ -1,21 +1,50 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestServer(t *testing.T) {
-	expected := "hello, world"
-	server := Server(&StubStore{expected})
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	res := httptest.NewRecorder()
+	t.Run("basic happy path request", func(t *testing.T) {
+		expected := "hello, world"
+		store := &SpyStore{expected, false}
+		server := Server(store)
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		res := httptest.NewRecorder()
 
-	server.ServeHTTP(res, req)
+		server.ServeHTTP(res, req)
 
-	if res.Body.String() != expected {
-		t.Errorf("got '%s' want '%s'", res.Body.String(), expected)
-	}
+		if res.Body.String() != expected {
+			t.Errorf("got '%s' want '%s'", res.Body.String(), expected)
+		}
+
+		if store.cancelled {
+			t.Error("should NOT be cancelled")
+		}
+	})
+	t.Run("tell store to cancel work if request cancelled", func(t *testing.T) {
+		expected := "hello, world"
+		store := &SpyStore{response: expected}
+		server := Server(store)
+
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+
+		cancellingCtx, cancel := context.WithCancel(req.Context())
+		time.AfterFunc(5*time.Millisecond, cancel)
+		req = req.WithContext(cancellingCtx)
+
+		res := httptest.NewRecorder()
+
+		server.ServeHTTP(res, req)
+
+		if !store.cancelled {
+			t.Errorf("Store was NOT instructed to cancel")
+		}
+
+	})
 
 }
