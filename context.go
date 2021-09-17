@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -8,56 +10,71 @@ import (
 )
 
 type Store interface {
-	Fetch() string
-	Cancel()
+	Fetch(ctx context.Context) (string, error)
 }
 
 // Server creation
 func Server(store Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
 
-		data := make(chan string, 1)
+		res, err := store.Fetch(r.Context())
 
-		go func() {
-			data <- store.Fetch()
-		}()
-
-		select {
-		case d := <-data:
-			fmt.Fprint(w, d)
-		case <-ctx.Done():
-			store.Cancel()
+		if err != nil {
+			return
 		}
+
+		fmt.Fprint(w, res)
 	}
 }
 
 // Store spy
 type SpyStore struct {
-	response  string
-	cancelled bool
-	t         *testing.T
+	response string
+	t        *testing.T
 }
 
-func (s *SpyStore) Fetch() string {
-	time.Sleep(100 * time.Millisecond)
-	return s.response
+// spy response writer - need to check whether Response was written or not
+type SpyResponseWriter struct {
+	written bool
 }
 
-func (s *SpyStore) Cancel() {
-	s.cancelled = true
+func (s *SpyResponseWriter) Header() http.Header {
+	s.written = true
+	return nil
 }
 
-func (s *SpyStore) assertWasCancelled() {
-	s.t.Helper()
-	if !s.cancelled {
-		s.t.Error("store was NOT cancelled")
-	}
+func (s *SpyResponseWriter) Write([]byte) (int, error) {
+	s.written = true
+	return 0, errors.New("Not implemented")
 }
 
-func (s *SpyStore) assertWasNotCancelled() {
-	s.t.Helper()
-	if s.cancelled {
-		s.t.Error("store was cancelled")
+func (s *SpyResponseWriter) WriteHeader(statusCode int) {
+	s.written = true
+}
+
+func (s *SpyStore) Fetch(ctx context.Context) (string, error) {
+
+	data := make(chan string, 1)
+
+	go func() {
+		var result string
+		for _, c := range s.response {
+			select {
+			case <-ctx.Done():
+				s.t.Log("spy store was cancelled")
+				return
+			default:
+				time.Sleep(10 * time.Millisecond)
+				result += string(c)
+			}
+		}
+		data <- result
+	}()
+
+	select {
+	case d := <-data:
+		return d, nil
+	case <-ctx.Done():
+		return "", ctx.Err()
 	}
 }
