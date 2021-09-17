@@ -11,7 +11,7 @@ import (
 func TestServer(t *testing.T) {
 	t.Run("basic happy path request", func(t *testing.T) {
 		expected := "hello, world"
-		store := &SpyStore{expected, false}
+		store := &SpyStore{response: expected, t: t}
 		server := Server(store)
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 		res := httptest.NewRecorder()
@@ -21,14 +21,11 @@ func TestServer(t *testing.T) {
 		if res.Body.String() != expected {
 			t.Errorf("got '%s' want '%s'", res.Body.String(), expected)
 		}
-
-		if store.cancelled {
-			t.Error("should NOT be cancelled")
-		}
+		store.assertWasNotCancelled()
 	})
 	t.Run("tell store to cancel work if request cancelled", func(t *testing.T) {
 		expected := "hello, world"
-		store := &SpyStore{response: expected}
+		store := &SpyStore{response: expected, t: t}
 		server := Server(store)
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -41,10 +38,7 @@ func TestServer(t *testing.T) {
 
 		server.ServeHTTP(res, req)
 
-		if !store.cancelled {
-			t.Errorf("Store was NOT instructed to cancel")
-		}
-
+		store.assertWasCancelled()
 	})
 
 }
