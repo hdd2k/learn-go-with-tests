@@ -21,6 +21,11 @@ func TestNumeral(t *testing.T) {
 			2,
 			"II",
 		},
+		{
+			"3 converts to III",
+			3,
+			"III",
+		},
 	}
 
 	for _, c := range cases {
