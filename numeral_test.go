@@ -51,6 +51,11 @@ func TestNumeral(t *testing.T) {
 			8,
 			"VIII",
 		},
+		{
+			"9 converts to IX",
+			9,
+			"IX",
+		},
 	}
 
 	for _, c := range cases {
