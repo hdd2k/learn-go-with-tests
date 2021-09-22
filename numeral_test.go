@@ -54,12 +54,12 @@ func TestNumeral(t *testing.T) {
 }
 
 func TestConvertToArabic(t *testing.T) {
-	for _, c := range cases[:1] {
-		t.Run(fmt.Sprintf("%q gets converted to %q", c.Roman, c.Arabic), func(t *testing.T) {
+	for _, c := range cases[:3] {
+		t.Run(fmt.Sprintf("%s gets converted to %d", c.Roman, c.Arabic), func(t *testing.T) {
 			want := c.Arabic
 			got := ConvertToArabic(c.Roman)
 			if want != got {
-				t.Errorf("got %q want %q", got, want)
+				t.Errorf("got %d want %d", got, want)
 			}
 		})
 	}
