@@ -27,9 +27,10 @@ var RomanNums = RomanNumerals{
 	{1, "I"},
 }
 
-func (r RomanNumerals) ValueOf(otherStr string) int {
+func (r RomanNumerals) ValueOf(symbols ...byte) int {
+	sym := string(symbols)
 	for _, s := range r {
-		if otherStr == s.Symbol {
+		if sym == s.Symbol {
 			return s.Value
 		}
 	}
@@ -62,10 +63,8 @@ func ConvertToArabic(roman string) int {
 		// lookahead to next char if possible
 		if couldBeSubtracted(i, len(roman), currSym) {
 			nextSym := roman[i+1]
-			// create combined string
-			potentialNum := string([]byte{currSym, nextSym})
 			// convert combined string by looking up
-			val := RomanNums.ValueOf(potentialNum)
+			val := RomanNums.ValueOf(currSym, nextSym)
 			if val != 0 {
 				total += val
 				i++
@@ -73,7 +72,7 @@ func ConvertToArabic(roman string) int {
 				total++
 			}
 		} else {
-			total++
+			total += (RomanNums.ValueOf(currSym))
 		}
 	}
 
