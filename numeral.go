@@ -60,7 +60,7 @@ func ConvertToArabic(roman string) int {
 		currSym := roman[i]
 
 		// lookahead to next char if possible
-		if (i+1 < len(roman)) && (currSym == 'I') {
+		if couldBeSubtracted(i, len(roman), currSym) {
 			nextSym := roman[i+1]
 			// create combined string
 			potentialNum := string([]byte{currSym, nextSym})
@@ -78,5 +78,10 @@ func ConvertToArabic(roman string) int {
 	}
 
 	return total
+
+}
+
+func couldBeSubtracted(index int, allRomanLen int, currSym uint8) bool {
+	return (index+1 < allRomanLen) && (currSym == 'I')
 
 }
