@@ -9,7 +9,9 @@ type RomanNum struct {
 	Symbol string
 }
 
-var RomanNums = []RomanNum{
+type RomanNumerals []RomanNum
+
+var RomanNums = RomanNumerals{
 	{1000, "M"},
 	{900, "CM"},
 	{500, "D"},
@@ -25,6 +27,15 @@ var RomanNums = []RomanNum{
 	{1, "I"},
 }
 
+func (r RomanNumerals) ValueOf(otherStr string) int {
+	for _, s := range r {
+		if otherStr == s.Symbol {
+			return s.Value
+		}
+	}
+	return 0
+}
+
 func ConvertToRoman(arabic int) string {
 	var result strings.Builder
 
@@ -38,9 +49,34 @@ func ConvertToRoman(arabic int) string {
 }
 
 func ConvertToArabic(roman string) int {
-	var result int
-	for range roman {
-		result += 1
+	// var result int
+	// for range roman {
+	// 	result += 1
+	// }
+	// return result
+
+	total := 0
+	for i := 0; i < len(roman); i++ {
+		currSym := roman[i]
+
+		// lookahead to next char if possible
+		if (i+1 < len(roman)) && (currSym == 'I') {
+			nextSym := roman[i+1]
+			// create combined string
+			potentialNum := string([]byte{currSym, nextSym})
+			// convert combined string by looking up
+			val := RomanNums.ValueOf(potentialNum)
+			if val != 0 {
+				total += val
+				i++
+			} else {
+				total++
+			}
+		} else {
+			total++
+		}
 	}
-	return result
+
+	return total
+
 }
