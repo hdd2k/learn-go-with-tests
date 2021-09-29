@@ -50,12 +50,6 @@ func ConvertToRoman(arabic int) string {
 }
 
 func ConvertToArabic(roman string) int {
-	// var result int
-	// for range roman {
-	// 	result += 1
-	// }
-	// return result
-
 	total := 0
 	for i := 0; i < len(roman); i++ {
 		currSym := roman[i]
@@ -69,7 +63,7 @@ func ConvertToArabic(roman string) int {
 				total += val
 				i++
 			} else {
-				total++
+				total += RomanNums.ValueOf(currSym)
 			}
 		} else {
 			total += (RomanNums.ValueOf(currSym))
@@ -81,6 +75,6 @@ func ConvertToArabic(roman string) int {
 }
 
 func couldBeSubtracted(index int, allRomanLen int, currSym uint8) bool {
-	return (index+1 < allRomanLen) && (currSym == 'I')
+	return (index+1 < allRomanLen) && ((currSym == 'I') || (currSym == 'X') || (currSym == 'C'))
 
 }
