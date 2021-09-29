@@ -31,5 +31,5 @@ func SecondHand(time time.Time) Point {
 }
 
 func secondsInRadians(time time.Time) float64 {
-	return math.Pi
+	return math.Pi / (30 / (float64(time.Second())))
 }
