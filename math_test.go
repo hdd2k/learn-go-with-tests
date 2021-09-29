@@ -47,14 +47,20 @@ func TestSecondsToRadians(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		want := test.rad
-		got := secondsInRadians(test.time)
-		if want != got {
-			t.Errorf("Want %v radians got %v", want, got)
-		}
+		t.Run(testName(test.time), func(t *testing.T) {
+			want := test.rad
+			got := secondsInRadians(test.time)
+			if want != got {
+				t.Errorf("Want %v radians got %v", want, got)
+			}
+		})
 	}
 }
 
 func simpleTime(hour, min, second int) time.Time {
 	return time.Date(1337, time.January, 1, hour, min, second, 0, time.UTC)
+}
+
+func testName(t time.Time) string {
+	return t.Format("15:04:05")
 }
