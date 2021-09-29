@@ -11,19 +11,21 @@ type Point struct {
 }
 
 func SecondHand(time time.Time) Point {
-	rad := secondsInRadians(time)
+	secondHandPoint := secondHandPoint(time)
 
-	// calculate offsets from center (note: 90 is the second hand length)
-	xOffset := math.Sin(rad) * 90
-	yOffset := math.Cos(rad) * 90
+	// Scale to secondhand size (note: 90 is the second hand length)
+	x := secondHandPoint.X * 90
+	y := secondHandPoint.Y * 90
 
-	secondHandPoint := Point{
-		X: (150.0 + xOffset),
-		Y: (150.0 - yOffset),
-	}
-	return secondHandPoint
+	// Flip (X-axis is pos on right side but Y-axis is neg on up side --- based on unit circle)
+	x = x
+	y = -y
 
-	// return Point{150, 150 - 90}
+	// Offset / translate
+	x = x + 150
+	y = y + 150
+
+	return Point{x, y}
 }
 
 func secondsInRadians(time time.Time) float64 {
