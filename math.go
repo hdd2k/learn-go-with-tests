@@ -11,11 +11,7 @@ type Point struct {
 }
 
 func SecondHand(time time.Time) Point {
-	// angle from 12 o'clock (in degree) - minutes granularity
-	deg := (360 / 60) * (time.Minute())
-
-	// (in radian)
-	rad := (float64(2) * math.Pi) * (float64(deg) / 360.0)
+	rad := secondsInRadians(time)
 
 	// calculate offsets from center (note: 90 is the second hand length)
 	xOffset := math.Sin(rad) * 90
@@ -32,4 +28,8 @@ func SecondHand(time time.Time) Point {
 
 func secondsInRadians(time time.Time) float64 {
 	return math.Pi / (30 / (float64(time.Second())))
+}
+
+func secondHandPoint(t time.Time) Point {
+	return Point{0, -1}
 }

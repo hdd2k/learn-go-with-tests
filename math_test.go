@@ -23,7 +23,7 @@ func TestSecondHandAtMidnight(t *testing.T) {
 }
 
 func TestSecondHandAt30Seconds(t *testing.T) {
-	time := time.Date(1337, time.January, 1, 0, 30, 0, 0, time.UTC)
+	time := time.Date(1337, time.January, 1, 0, 0, 30, 0, time.UTC)
 
 	want := Point{X: 150, Y: 150 + 90}
 	got := SecondHand(time)
@@ -55,6 +55,26 @@ func TestSecondsToRadians(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSecondsToVector(t *testing.T) {
+	tests := []struct {
+		time  time.Time
+		point Point
+	}{
+		{simpleTime(0, 0, 30), Point{0, -1}},
+	}
+
+	for _, test := range tests {
+		t.Run(testName(test.time), func(t *testing.T) {
+			want := test.point
+			got := secondHandPoint(test.time)
+			if want != got {
+				t.Errorf("Want %v Point got %v Point", want, got)
+			}
+		})
+	}
+
 }
 
 func simpleTime(hour, min, second int) time.Time {
