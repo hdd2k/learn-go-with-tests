@@ -31,5 +31,10 @@ func secondsInRadians(time time.Time) float64 {
 }
 
 func secondHandPoint(t time.Time) Point {
-	return Point{0, -1}
+	rad := secondsInRadians(t)
+
+	xPos := math.Sin(rad)
+	yPos := math.Cos(rad)
+
+	return Point{xPos, yPos}
 }
