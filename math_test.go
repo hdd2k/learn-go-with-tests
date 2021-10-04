@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"math"
-	"strings"
 	"testing"
 	"time"
 )
@@ -39,27 +38,27 @@ type Svg struct {
 	} `xml:"line"`
 }
 
-func TestSecondHandAtMidnight(t *testing.T) {
-	time := time.Date(1337, time.January, 1, 0, 0, 0, 0, time.UTC)
+// func TestSecondHandAtMidnight(t *testing.T) {
+// 	time := time.Date(1337, time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	want := Point{X: 150, Y: 150 - 90}
-	got := SecondHand(time)
+// 	want := Point{X: 150, Y: 150 - 90}
+// 	got := SecondHand(time)
 
-	if want != got {
-		t.Errorf("Got %v want %v", got, want)
-	}
-}
+// 	if want != got {
+// 		t.Errorf("Got %v want %v", got, want)
+// 	}
+// }
 
-func TestSecondHandAt30Seconds(t *testing.T) {
-	time := time.Date(1337, time.January, 1, 0, 0, 30, 0, time.UTC)
+// func TestSecondHandAt30Seconds(t *testing.T) {
+// 	time := time.Date(1337, time.January, 1, 0, 0, 30, 0, time.UTC)
 
-	want := Point{X: 150, Y: 150 + 90}
-	got := SecondHand(time)
+// 	want := Point{X: 150, Y: 150 + 90}
+// 	got := SecondHand(time)
 
-	if want != got {
-		t.Errorf("Got %v want %v", got, want)
-	}
-}
+// 	if want != got {
+// 		t.Errorf("Got %v want %v", got, want)
+// 	}
+// }
 
 // write smaller tests first - comment out integration test during this
 func TestSecondsToRadians(t *testing.T) {
@@ -115,8 +114,8 @@ func TestSVGWriterAtMidnight(t *testing.T) {
 	svg := Svg{}
 	xml.Unmarshal(b.Bytes(), &svg)
 
-	x2 := "150"
-	y2 := "60"
+	x2 := "150.000"
+	y2 := "60.000"
 
 	for _, line := range svg.Line {
 		if line.X2 == x2 && line.Y2 == y2 {
@@ -124,7 +123,7 @@ func TestSVGWriterAtMidnight(t *testing.T) {
 		}
 	}
 
-	t.Errorf("Expected to find second hand pattern with x2 of %+v and y2 of %+v, in SVG output", x2, y2, b.String())
+	t.Errorf("Expected to find second hand pattern with x2 of %+v and y2 of %+v, in SVG output %v", x2, y2, b.String())
 }
 
 func simpleTime(hour, min, second int) time.Time {

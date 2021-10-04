@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"time"
 )
@@ -21,11 +20,12 @@ const svgEnd = `</svg>`
 
 func main() {
 	t := time.Now()
-	secondHandPt := SecondHand(t)
-	io.WriteString(os.Stdout, svgStart)
-	io.WriteString(os.Stdout, bezel)
-	io.WriteString(os.Stdout, secondHandTag(secondHandPt))
-	io.WriteString(os.Stdout, svgEnd)
+	SVGWriter(os.Stdout, t)
+	// secondHandPt := secondHand(os.Stdout, t)
+	// io.WriteString(os.Stdout, svgStart)
+	// io.WriteString(os.Stdout, bezel)
+	// io.WriteString(os.Stdout, secondHandTag(secondHandPt))
+	// io.WriteString(os.Stdout, svgEnd)
 }
 
 func secondHandTag(p Point) string {
