@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
-	"os"
+	// "os"
 	"time"
 )
 
@@ -83,6 +83,6 @@ func Countdown(writer io.Writer, s Sleeper) {
 	// fmt.Fprint(writer, finalWord)
 }
 
-func main() {
-	Countdown(os.Stdout, &DefaultSleeper{})
-}
+// func main() {
+// 	Countdown(os.Stdout, &DefaultSleeper{})
+// }
