@@ -10,20 +10,26 @@ type Point struct {
 	Y float64
 }
 
+const (
+	secondHandLength = 90
+	clockCenterX     = 150
+	clockCenterY     = 150
+)
+
 func SecondHand(time time.Time) Point {
 	secondHandPoint := secondHandPoint(time)
 
 	// Scale to secondhand size (note: 90 is the second hand length)
-	x := secondHandPoint.X * 90
-	y := secondHandPoint.Y * 90
+	x := secondHandPoint.X * secondHandLength
+	y := secondHandPoint.Y * secondHandLength
 
 	// Flip (X-axis is pos on right side but Y-axis is neg on up side --- based on unit circle)
 	x = x
 	y = -y
 
 	// Offset / translate
-	x = x + 150
-	y = y + 150
+	x = x + clockCenterX
+	y = y + clockCenterY
 
 	return Point{x, y}
 }
